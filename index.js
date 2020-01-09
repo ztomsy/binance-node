@@ -83,9 +83,9 @@ binance.loadStandardMarkets()
     .then((res) => {
             console.log("Markets loaded");
 
-            let prev_time;
-            let cur_time;
-            let time_diff;
+            let prevTimestamp;
+            let nowTimestamp;
+            let timeDiff;
             let ticker;
             let counter = 0;
 
@@ -108,33 +108,36 @@ binance.loadStandardMarkets()
                         console.log("ERROR Parsing data");
                     }
 
-                        cur_time = Date.now();
-                        //let currentTS = new Date(Date.UTC());
-                        time_diff = cur_time - prev_time;
-                        prev_time = cur_time;
+                        nowTimestamp = Date.now();
+                        let timestampToSave = new Date(nowTimestamp);
 
-                        console.log(cur_time.toLocaleString());
-                        console.log(`Time-diff: ${time_diff} ms`);
+                        //let currentTS = new Date(Date.UTC());
+                        timeDiff = nowTimestamp - prevTimestamp;
+                        prevTimestamp = nowTimestamp;
+
+                        console.log(nowTimestamp.toLocaleString());
+                        console.log(`Time-diff: ${timeDiff} ms`);
 
                         counter++;
-                        timeFromStart = cur_time - timeStart;
+                        timeFromStart = nowTimestamp - timeStart;
 
+                        console.log("-----");
                         console.log(`Time from start: ${timeFromStart} ms. Events: ${counter}.`);
 
                         try {
 
                             let bookTicker = binance.parseBookTickers(JSON.parse(data));
                             console.log(JSON.stringify(bookTicker));
-                            console.log("-----");
+
 
                             pool.query(' INSERT INTO tickers(timestamp, exchange, symbol, ask, ask_quantity, ' +
-                                'bid, bid_quantity) VALUES(CURRENT_TIMESTAMP, $1, $2, $3,$4,$5,$6)',
-                                ["binance", bookTicker.symbol, bookTicker.ask,
+                                'bid, bid_quantity) VALUES( $1, $2, $3, $4, $5, $6, $7)',
+                                [timestampToSave, "binance", bookTicker.symbol, bookTicker.ask,
                                 bookTicker.askVolume, bookTicker.bid, bookTicker.bidVolume],
                                 (err, res) =>{
                                     console.log(`Request # ${counter} added`);
                                     console.log(err);
-                                    console.log(res);
+                                    // console.log(res);
                                 });
 
 
