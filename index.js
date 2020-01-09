@@ -142,8 +142,11 @@ binance.loadStandardMarkets()
 
 
                         } catch(e) {
-                            console.log("Error");
-                            console.log(e);
+
+                            if (e !== undefined ) {
+                                console.log("Error:");
+                                console.log(e);
+                            }
                         }
                 }
             );
