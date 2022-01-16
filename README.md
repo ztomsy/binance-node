@@ -1,5 +1,7 @@
 Installation and running
 
+Node 16
+
 1. Install dependencies
     ``` shell script
     npm install
