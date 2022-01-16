@@ -30,6 +30,12 @@ cp src/config_def.js .config.js
 # set params in .config.js 
 ```
 
+**WARNING!** If running from docker and want to use postgreSQL on host machine (localhost)
+check following link for details https://stackoverflow.com/questions/24319662/from-inside-of-a-docker-container-how-do-i-connect-to-the-localhost-of-the-mach .
+  
+
+
+
 ## Docker 
 
 ```

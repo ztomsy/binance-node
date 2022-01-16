@@ -2,7 +2,9 @@
 // default configuration 
 // rename to .config.js and set the correct parameters
 
-exports.PG_CONNECT_URL ="postgresql://postgres:insect@localserver:5432/ztom2";
+// do not use localhost when running in Docker ! 
+
+exports.PG_CONNECT_URL ="postgresql://postgres:000000@localhost:5432/binance";
 
 
 
