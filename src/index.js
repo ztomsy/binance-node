@@ -41,8 +41,10 @@ pool.on("connect", connection => {
 pool.on('error', (err, client) => {
 
     console.log("PG ERROR");
-    console.log(JSON.stringify(err));
-    console.log(JSON.stringify(client));
+    console.error(JSON.stringify(err));
+    console.error(JSON.stringify(client));
+    process.exit()
+
 
 }) ;
 
@@ -54,8 +56,12 @@ pool.on('remove', (client) => {
     console.log("PG: Client REMOVED from Pool");
 });
 
-
+// check db connection
 pool.query('SELECT NOW()', (err, res) => {
+    if (err){
+        console.error("DB Error:", err)
+        process.exit(1)
+    }
     console.log(err, res);
 });
 
@@ -93,6 +99,8 @@ binance.loadStandardMarkets()
             let timeStart = Date.now();
             let timeFromStart = 0;
 
+            let requestsStored = 0 
+
             ws.on('message', function incoming(data) {
 
                     if (!markets) {
@@ -114,20 +122,21 @@ binance.loadStandardMarkets()
                         //let currentTS = new Date(Date.UTC());
                         timeDiff = nowTimestamp - prevTimestamp;
                         prevTimestamp = nowTimestamp;
-
-                        console.log(nowTimestamp.toLocaleString());
-                        console.log(`Time-diff: ${timeDiff} ms`);
+                        
+                        console.log("-----");                            
+                        console.log(timestampToSave.toISOString());
+                        console.log(`Last message received: ${timeDiff} ms`);
 
                         counter++;
                         timeFromStart = nowTimestamp - timeStart;
 
-                        console.log("-----");
-                        console.log(`Time from start: ${timeFromStart} ms. Events: ${counter}.`);
+                        
+                        console.log(`Time from start: ${timeFromStart} ms. Events: ${counter}. Saved: ${requestsStored}. Stored Per Second: ${requestsStored/(timeFromStart/1000)}  `);
 
                         try {
 
                             let bookTicker = binance.parseBookTickers(JSON.parse(data));
-                            console.log(JSON.stringify(bookTicker));
+                            // console.log(JSON.stringify(bookTicker));
 
 
                             pool.query(' INSERT INTO tickers(timestamp, exchange, symbol, ask, ask_quantity, ' +
@@ -135,7 +144,8 @@ binance.loadStandardMarkets()
                                 [timestampToSave, "binance", bookTicker.symbol, bookTicker.ask,
                                 bookTicker.askVolume, bookTicker.bid, bookTicker.bidVolume],
                                 (err, res) =>{
-                                    console.log(`Request # ${counter} added`);
+                                    requestsStored++ 
+                                    // console.log(`Request # ${counter} added  `);
                                     console.log(err);
                                     // console.log(res);
                                 });
