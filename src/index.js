@@ -8,7 +8,7 @@ const requiredConfigParams = ["PG_CONNECT_URL"];
 
 // loading config and check required params
 try {
-     var config = require("./.config");
+     var config = require("../.config");
 
     for( let configParam of requiredConfigParams ){
         if (eval( "config."+configParam) === undefined )
