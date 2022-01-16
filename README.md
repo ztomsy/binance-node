@@ -7,7 +7,7 @@ Node 16
     npm install
     ```
 
-2.  Configuraton. 
+2.  Configuration. 
 
  - copy config_def.js to .config.js 
      ```shell script
