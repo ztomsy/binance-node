@@ -100,6 +100,7 @@ binance.loadStandardMarkets()
             let timeFromStart = 0;
 
             let requestsStored = 0 
+            let errors = 0 
 
             ws.on('message', function incoming(data) {
 
@@ -131,7 +132,7 @@ binance.loadStandardMarkets()
                         timeFromStart = nowTimestamp - timeStart;
 
                         
-                        console.log(`Time from start: ${timeFromStart} ms. Events: ${counter}. Saved: ${requestsStored}. Stored Per Second: ${requestsStored/(timeFromStart/1000)}  `);
+                        console.log(`Saved: ${requestsStored}/${counter}. Errors ${errors} Stored Per Second: ${requestsStored/(timeFromStart/1000)}  `);
 
                         try {
 
@@ -144,7 +145,15 @@ binance.loadStandardMarkets()
                                 [timestampToSave, "binance", bookTicker.symbol, bookTicker.ask,
                                 bookTicker.askVolume, bookTicker.bid, bookTicker.bidVolume],
                                 (err, res) =>{
-                                    requestsStored++ 
+                                    if (!err) {
+                                    requestsStored++ }
+                                    else{
+                                        errors++
+                                        console.error(err)
+                                        console.error([timestampToSave, "binance", bookTicker.symbol, bookTicker.ask,
+                                        bookTicker.askVolume, bookTicker.bid, bookTicker.bidVolume])
+                                        
+                                    }
                                     // console.log(`Request # ${counter} added  `);
                                     console.log(err);
                                     // console.log(res);
